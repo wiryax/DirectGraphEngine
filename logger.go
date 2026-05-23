@@ -1,4 +1,4 @@
-package engine
+package DirectGraphEngine
 
 import (
 	"fmt"
@@ -8,22 +8,22 @@ import (
 
 type LogLevel string
 
-const(
-	LevelInfo LogLevel = "INFO"
-	LevelError LogLevel = "ERROR"
+const (
+	LevelInfo    LogLevel = "INFO"
+	LevelError   LogLevel = "ERROR"
 	LevelWarning LogLevel = "WARNING"
 )
 
 type EvenType string
 
-const(
+const (
 	EventSuccess EvenType = "SUCCESS"
-	EventStart EvenType = "START"
-	EventFailed EvenType = "FAILED"
+	EventStart   EvenType = "START"
+	EventFailed  EvenType = "FAILED"
 	EventSkipped EvenType = "SKIPPED"
 )
 
-type GraphLogger interface{
+type GraphLogger interface {
 	FlushLog(et EvenType, logLv LogLevel, msg, vId, gId string)
 }
 

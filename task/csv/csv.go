@@ -3,9 +3,10 @@ package csv
 import (
 	"encoding/csv"
 	"fmt"
-	engine "graph-engine"
 	"io"
 	"strings"
+
+	engine "github.com/wiryax/DirectGraphEngine"
 )
 
 type Clause struct {

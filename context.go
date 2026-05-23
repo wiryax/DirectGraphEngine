@@ -1,4 +1,4 @@
-package engine
+package DirectGraphEngine
 
 type GraphContext struct {
 	rState    *RuntimeState

@@ -2,10 +2,11 @@ package csv
 
 import (
 	"fmt"
-	engine "graph-engine"
 	"os"
 	"reflect"
 	"testing"
+
+	engine "github.com/wiryax/DirectGraphEngine"
 )
 
 func TestCsvFilterWorkflow(t *testing.T) {

@@ -1,4 +1,4 @@
-package engine
+package DirectGraphEngine
 
 import (
 	"errors"
@@ -30,7 +30,7 @@ func (m *MockTask) Execute(gCtx *GraphContext) error {
 
 func newVertex(id string, task func(gCtx *GraphContext) error) *Vertex {
 	mockTask := NewMockTask(task)
-	return &Vertex{id: id, task: mockTask, state: Pendding}
+	return &Vertex{id: id, task: mockTask, state: Pending}
 }
 
 func newEdge(from, to *Vertex) *Edge {
@@ -84,7 +84,7 @@ func TestGraphWorkflow(t *testing.T) {
 		postVertex []*Vertex
 	}{
 		{
-			title: "TestSingelParentDeps_SuccessCase",
+			title: "TestSingleParentDeps_SuccessCase",
 			tGraph: tGraph{
 				tVertex: []tVertex{
 					{
@@ -117,33 +117,33 @@ func TestGraphWorkflow(t *testing.T) {
 			},
 			preVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Pendding,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
 				}, &Vertex{
-					id:           "vB",
-					state:        Pendding,
-					penddingEdge: 1,
-					failEdge:     0,
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 1,
+					failEdge:    0,
 				},
 			},
 			postVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Success,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 				&Vertex{
-					id:           "vB",
-					state:        Success,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 			},
 		}, {
-			title: "TestSingelParentDeps_FailCase",
+			title: "TestSingleParentDeps_FailCase",
 			tGraph: tGraph{
 				tVertex: []tVertex{
 					{
@@ -176,33 +176,33 @@ func TestGraphWorkflow(t *testing.T) {
 			},
 			preVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Pendding,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
 				}, &Vertex{
-					id:           "vB",
-					state:        Pendding,
-					penddingEdge: 1,
-					failEdge:     0,
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 1,
+					failEdge:    0,
 				},
 			},
 			postVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Fail,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 				&Vertex{
-					id:           "vB",
-					state:        Skipped,
-					penddingEdge: 0,
-					failEdge:     1,
+					id:          "vB",
+					state:       Skipped,
+					pendingEdge: 0,
+					failEdge:    1,
 				},
 			},
 		}, {
-			title: "TestSingelParentDeps_FailCase_with_OR_logical_true",
+			title: "TestSingleParentDeps_FailCase_with_OR_logical_true",
 			tGraph: tGraph{
 				tVertex: []tVertex{
 					{
@@ -253,33 +253,33 @@ func TestGraphWorkflow(t *testing.T) {
 			},
 			preVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Pendding,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
 				}, &Vertex{
-					id:           "vB",
-					state:        Pendding,
-					penddingEdge: 1,
-					failEdge:     0,
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 1,
+					failEdge:    0,
 				},
 			},
 			postVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Fail,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 				&Vertex{
-					id:           "vB",
-					state:        Success,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 			},
 		}, {
-			title: "TestSingelParentDeps_FailCase_with_OR_logical_false",
+			title: "TestSingleParentDeps_FailCase_with_OR_logical_false",
 			tGraph: tGraph{
 				tVertex: []tVertex{
 					{
@@ -330,29 +330,722 @@ func TestGraphWorkflow(t *testing.T) {
 			},
 			preVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Pendding,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
 				}, &Vertex{
-					id:           "vB",
-					state:        Pendding,
-					penddingEdge: 1,
-					failEdge:     0,
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 1,
+					failEdge:    0,
 				},
 			},
 			postVertex: []*Vertex{
 				&Vertex{
-					id:           "vA",
-					state:        Fail,
-					penddingEdge: 0,
-					failEdge:     0,
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
 				},
 				&Vertex{
-					id:           "vB",
-					state:        Skipped,
-					penddingEdge: 0,
-					failEdge:     1,
+					id:          "vB",
+					state:       Skipped,
+					pendingEdge: 0,
+					failEdge:    1,
+				},
+			},
+		}, {
+			title: "TestMultipleParentDeps_SingleParentStatus_SuccessCase",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(nil),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(nil),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vB",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 3,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vC",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+			},
+		}, {
+			title: "TestMultipleParentDeps_MultipleParentStatus_SuccessCase",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Fail,
+						tk:     nil,
+					}, {
+						from:   "vB",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Fail,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 3,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vC",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+			},
+		}, {
+			title: "TestMultipleParentDeps_MultipleParentStatus_Expression_SuccessCase",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     []token{{"var1", ExpVariable}, {"var2", ExpVariable}, {"", ExpEqual}},
+					}, {
+						from:   "vB",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vD",
+						lOp:    ExpOr,
+						pConst: Fail,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state: make(map[string]*Vertex),
+				variable: map[string]string{
+					"var1": "1",
+					"var2": "1",
+				},
+				vState: make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state: make(map[string]*Vertex),
+				variable: map[string]string{
+					"var1": "1",
+					"var2": "1",
+				},
+				vState: make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 3,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vC",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+				&Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+			},
+		}, {
+			title: "TestMultipleRoot_SuccessCase",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(nil),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(nil),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					}, {
+						id:   "vE",
+						task: taskFunc(nil),
+					}, {
+						id:   "vF",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vB",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vD",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				},
+			},
+		}, {
+			title: "TestMultipleRoot",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					}, {
+						id:   "vE",
+						task: taskFunc(nil),
+					}, {
+						id:   "vF",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Fail,
+						tk:     nil,
+					}, {
+						from:   "vB",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vD",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Skipped,
+					pendingEdge: 0,
+					failEdge:    1,
+				},
+			},
+		}, {
+			title: "TestMultipleRoot_Expression",
+			tGraph: tGraph{
+				tVertex: []tVertex{
+					{
+						id:   "vA",
+						task: taskFunc(nil),
+					}, {
+						id:   "vB",
+						task: taskFunc(nil),
+					}, {
+						id:   "vC",
+						task: taskFunc(errors.New("mock error")),
+					}, {
+						id:   "vD",
+						task: taskFunc(nil),
+					}, {
+						id:   "vE",
+						task: taskFunc(nil),
+					}, {
+						id:   "vF",
+						task: taskFunc(nil),
+					},
+				},
+				relationship: []relationship{
+					{
+						from:   "vA",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vB",
+						to:     "vE",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vC",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					}, {
+						from:   "vD",
+						to:     "vF",
+						lOp:    ExpAnd,
+						pConst: Success,
+						tk:     nil,
+					},
+				},
+				log: nil,
+			},
+			preRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			postRuntimeState: &RuntimeState{
+				state:    make(map[string]*Vertex),
+				variable: make(map[string]string),
+				vState:   make(map[*Vertex]state),
+			},
+			preVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Pending,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Pending,
+					pendingEdge: 2,
+					failEdge:    0,
+				},
+			},
+			postVertex: []*Vertex{
+				&Vertex{
+					id:          "vA",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vB",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vC",
+					state:       Fail,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vD",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vE",
+					state:       Success,
+					pendingEdge: 0,
+					failEdge:    0,
+				}, &Vertex{
+					id:          "vF",
+					state:       Skipped,
+					pendingEdge: 0,
+					failEdge:    1,
 				},
 			},
 		},
