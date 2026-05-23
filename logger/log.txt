@@ -1,3 +1,0 @@
-[19:43:04] [INFO] [A] [START] 
-[19:43:04] [INFO] [A] [SUCCESS] 
-[19:43:04] [INFO] [A] [SUCCESS] 
