@@ -17,12 +17,11 @@ const (
 	ExpBoolTrue
 	ExpOnSuccess
 	ExpOnFail
-	ExpOnPedding
 	ExpCompilation
-	ExpOnPendding
+	ExpOnPending
 	ExpEqual
-	ExpOpenParentness
-	ExpCloseParentness
+	ExpOpenParentheses
+	ExpCloseParentheses
 )
 
 type expressionState int
@@ -199,8 +198,8 @@ func (r *RuntimeState) GetVertexState(id string) tokenType {
 	switch v.state {
 	case Success:
 		return ExpOnSuccess
-	case Pendding:
-		return ExpOnPendding
+	case Pending:
+		return ExpOnPending
 	default:
 		return ExpOnFail
 	}

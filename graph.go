@@ -7,7 +7,7 @@ import (
 type state int
 
 const (
-	Pendding state = iota
+	Pending state = iota
 	Success
 	Fail
 	Running
@@ -30,15 +30,15 @@ type Task interface {
 }
 
 type Vertex struct {
-	id                     string
-	state                  state
-	task                   Task
-	penddingEdge, failEdge int
-	in, out                []*Edge
+	id                    string
+	state                 state
+	task                  Task
+	pendingEdge, failEdge int
+	in, out               []*Edge
 }
 
 func (v *Vertex) String() string {
-	return fmt.Sprintf("id=%s state=%d penddingEdge=%d failEdge=%d,", v.id, v.state, v.penddingEdge, v.failEdge)
+	return fmt.Sprintf("id=%s state=%d pendingEdge=%d failEdge=%d,", v.id, v.state, v.pendingEdge, v.failEdge)
 }
 
 func (v *Vertex) GetId() string {
@@ -89,7 +89,7 @@ func (g *Graph) run(gCtx *GraphContext) {
 
 	var queue []*Vertex
 	for _, v := range g.vertex {
-		if v.penddingEdge == 0 && v.failEdge == 0 {
+		if v.pendingEdge == 0 && v.failEdge == 0 {
 			queue = append(queue, v)
 		}
 	}
@@ -125,24 +125,24 @@ func (g *Graph) getReadyVertex(gCtx *GraphContext, v *Vertex, queue *[]*Vertex) 
 	for _, child := range v.out {
 		if !child.evalConst() && child.lOp == ExpAnd {
 			child.to.failEdge++
-			child.to.penddingEdge--
+			child.to.pendingEdge--
 		} else {
 			rEvaluate := evaluate(gCtx, child.exp.tokens)
 			if rEvaluate == False {
 				child.to.failEdge++
-				child.to.penddingEdge--
+				child.to.pendingEdge--
 			} else if rEvaluate == True {
-				child.to.penddingEdge--
+				child.to.pendingEdge--
 			}
 		}
 
-		if child.to.penddingEdge == 0 && child.to.failEdge > 0 {
+		if child.to.pendingEdge == 0 && child.to.failEdge > 0 {
 			child.to.state = Skipped
 		}
 
 		g.getReadyVertex(gCtx, child.to, queue)
 
-		if child.to.penddingEdge == 0 && child.to.failEdge == 0 {
+		if child.to.pendingEdge == 0 && child.to.failEdge == 0 {
 			*queue = append(*queue, child.to)
 		}
 	}
@@ -160,7 +160,7 @@ func (g *Graph) Connect(from, to *Vertex, op state, lOp tokenType, tk []token) {
 		lOp:    lOp,
 	}
 
-	to.penddingEdge++
+	to.pendingEdge++
 
 	for i := range tk {
 		edge.exp.push(tk[i])
@@ -173,7 +173,7 @@ func (g *Graph) Add(id string, task Task) *Vertex {
 	v := &Vertex{
 		id:    id,
 		task:  task,
-		state: Pendding,
+		state: Pending,
 	}
 
 	g.vertex = append(g.vertex, v)
